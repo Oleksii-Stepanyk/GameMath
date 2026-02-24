@@ -1,4 +1,4 @@
-#include "float_representation.h"
+#include "representation.h"
 
 uint32_t f_to_bits(float value)
 {

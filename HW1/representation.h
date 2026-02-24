@@ -1,5 +1,5 @@
-#ifndef FLOAT_REPRESENTATION_H
-#define FLOAT_REPRESENTATION_H
+#ifndef REPRESENTATION_H
+#define REPRESENTATION_H
 
 #include <inttypes.h>
 #include <stdbool.h>
@@ -25,4 +25,4 @@ double to_double(uint64_t bits, bool littleEndian);
 uint32_t f_big_little_endian(uint32_t value);
 uint64_t d_big_little_endian(uint64_t value);
 
-#endif // FLOAT_REPRESENTATION_H
+#endif // REPRESENTATION_H
