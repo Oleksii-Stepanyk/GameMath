@@ -4,8 +4,8 @@
 
 int main(void)
 {
-    uint32_t bits = 0b00111111000110011001100110011010;
-    float num = to_float(bits, true);
+    uint64_t bits = 0b0011111100011001100110011001101000111111000110011001100110011010;
+    double num = to_double(bits, true);
     printf("%e", num);
     return 0;
 }

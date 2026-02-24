@@ -11,9 +11,18 @@ union float_bits
     float value;
 };
 
-uint32_t to_bits(float value);
-float to_float(uint32_t bits, bool littleEndian);
+union double_bits
+{
+    char c_bits[8];
+    uint64_t bits;
+    double value;
+};
 
-uint32_t big_little_endian(uint32_t value);
+uint32_t f_to_bits(float value);
+uint64_t d_to_bits(double value);
+float to_float(uint32_t bits, bool littleEndian);
+double to_double(uint64_t bits, bool littleEndian);
+uint32_t f_big_little_endian(uint32_t value);
+uint64_t d_big_little_endian(uint64_t value);
 
 #endif // FLOAT_REPRESENTATION_H
