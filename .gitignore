@@ -2,5 +2,5 @@
 **/.vscode/
 
 # Build Artifacts
-**/*.exe
+**/build/
 
