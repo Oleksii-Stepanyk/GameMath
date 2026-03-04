@@ -1,5 +1,6 @@
 #include "math.h"
 #include "checks.h"
+#include "representation.h"
 
 float abs_f(float number)
 {
