@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "system_check.h"
 #include "representation.h"
 
 int main(void)
