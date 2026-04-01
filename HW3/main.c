@@ -6,6 +6,7 @@
 
 static const float PI = 3.14159265358979323846f;
 static const float EPSILON = 1e-6f;
+static const int OUTPUT_PRECISION = 15;
 
 static void print_vector3(const char *label, Vector3 value, int precision)
 {
@@ -140,16 +141,16 @@ int main(void)
     float i = vector3_dot((Vector3){3.1f, -2.4f, 1.7f}, (Vector3){-0.8f, 1.4f, -2.3f});
     float j = vector3_dot((Vector3){4.2f, 0.9f, -3.5f}, (Vector3){-2.1f, 3.3f, 0.4f});
 
-    print_vector3("a", a, 2);
-    print_vector3("b", b, 2);
-    print_vector3("c", c, 2);
-    print_vector3("d", d, 2);
-    print_vector3("e", e, 2);
-    print_vector3("f", f, 2);
-    print_vector3("g", g, 2);
-    print_vector3("h", h, 2);
-    print_scalar("i", i, 2);
-    print_scalar("j", j, 2);
+    print_vector3("a", a, OUTPUT_PRECISION);
+    print_vector3("b", b, OUTPUT_PRECISION);
+    print_vector3("c", c, OUTPUT_PRECISION);
+    print_vector3("d", d, OUTPUT_PRECISION);
+    print_vector3("e", e, OUTPUT_PRECISION);
+    print_vector3("f", f, OUTPUT_PRECISION);
+    print_vector3("g", g, OUTPUT_PRECISION);
+    print_vector3("h", h, OUTPUT_PRECISION);
+    print_scalar("i", i, OUTPUT_PRECISION);
+    print_scalar("j", j, OUTPUT_PRECISION);
 
     // Task 2
     puts("\n--- Task 2 ---");
@@ -182,13 +183,13 @@ int main(void)
         char a_label[] = {'a', '_', labels[idx], '\0'};
         char b_label[] = {'b', '_', labels[idx], '\0'};
 
-        print_vector2(a_label, player_view_vectors[idx], 2);
-        print_vector2(b_label, enemy_view_vectors[idx], 2);
+        print_vector2(a_label, player_view_vectors[idx], OUTPUT_PRECISION);
+        print_vector2(b_label, enemy_view_vectors[idx], OUTPUT_PRECISION);
 
         bool player_can_see_enemy = isVisible2D(player_view_vectors[idx], enemy_relative_position);
         bool enemy_can_see_player = isVisible2D(enemy_view_vectors[idx], player_relative_position);
 
-        printf("visible_%c = %s\n", labels[idx], player_can_see_enemy && enemy_can_see_player ? "true" : "false");
+        printf("visible_%c = %s\n", labels[idx], player_can_see_enemy && enemy_can_see_player ? "true\n" : "false\n");
     }
 
     // Task 3
@@ -209,10 +210,10 @@ int main(void)
     Vector2 reflected_dir_A = reflect2D(bullet_direction, normal_wall_A);
     float hit_angle_A = getHitAngle2D(bullet_direction, wall_A_start, wall_A_end);
 
-    print_vector2("Hit Point A", hit_point_A, 6);
-    print_vector2("Reflected Dir A", reflected_dir_A, 6);
-    print_scalar("Hit Angle A", hit_angle_A, 6);
-    print_vector2("Normal A", normal_wall_A, 6);
+    print_vector2("Hit Point A", hit_point_A, OUTPUT_PRECISION);
+    print_vector2("Reflected Dir A", reflected_dir_A, OUTPUT_PRECISION);
+    print_scalar("Hit Angle A", hit_angle_A, OUTPUT_PRECISION);
+    print_vector2("Normal A", normal_wall_A, OUTPUT_PRECISION);
 
     Vector2 hit_point_B; // Where bullet hits wall B
     getIntersection2D(hit_point_A, reflected_dir_A, wall_B_start, wall_B_end, &hit_point_B);
@@ -221,10 +222,10 @@ int main(void)
     Vector2 reflected_dir_B = reflect2D(reflected_dir_A, normal_wall_B);
     float hit_angle_B = getHitAngle2D(reflected_dir_A, wall_B_start, wall_B_end);
 
-    print_vector2("Hit Point B", hit_point_B, 6);
-    print_vector2("Reflected Dir B", reflected_dir_B, 6);
-    print_scalar("Hit Angle B", hit_angle_B, 6);
-    print_vector2("Normal B", normal_wall_B, 6);
+    print_vector2("\nHit Point B", hit_point_B, OUTPUT_PRECISION);
+    print_vector2("Reflected Dir B", reflected_dir_B, OUTPUT_PRECISION);
+    print_scalar("Hit Angle B", hit_angle_B, OUTPUT_PRECISION);
+    print_vector2("Normal B", normal_wall_B, OUTPUT_PRECISION);
 
     return 0;
 }
