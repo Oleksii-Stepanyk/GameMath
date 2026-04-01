@@ -85,13 +85,13 @@ static Vector2 getFacingNormal2D(Vector2 p1, Vector2 p2, Vector2 incident_dir)
 {
     double wx = p2.x - p1.x;
     double wy = p2.y - p1.y;
-    
+
     Vector2 n1 = {-wy, wx};
     Vector2 n2 = {wy, -wx};
-    
+
     n1 = vector2_normalize(n1);
     n2 = vector2_normalize(n2);
-    
+
     if (vector2_dot(incident_dir, n1) < 0.0f)
     {
         return n1;
@@ -102,24 +102,24 @@ static Vector2 getFacingNormal2D(Vector2 p1, Vector2 p2, Vector2 incident_dir)
 static float getHitAngle2D(Vector2 incident_dir, Vector2 p1, Vector2 p2)
 {
     Vector2 wall_vec = {p2.x - p1.x, p2.y - p1.y};
-    
+
     Vector2 dir_norm = vector2_normalize(incident_dir);
     Vector2 wall_norm = vector2_normalize(wall_vec);
-    
+
     float cos_theta = fabsf(vector2_dot(dir_norm, wall_norm));
-    
+
     if (cos_theta > 1.0f)
     {
         cos_theta = 1.0f;
     }
-    
+
     return acosf(cos_theta) * (180.0f / PI);
 }
 
 static Vector2 reflect2D(Vector2 incident_dir, Vector2 normal)
 {
     float dot = vector2_dot(incident_dir, normal);
-    
+
     return (Vector2){
         .x = incident_dir.x - (2.0f * dot * normal.x),
         .y = incident_dir.y - (2.0f * dot * normal.y),
@@ -194,14 +194,14 @@ int main(void)
 
     // Task 3
     puts("\n--- Task 3 ---");
-    Vector2 bullet_start = {-2.0f, +2.0f}; // S
+    Vector2 bullet_start = {-2.0f, +2.0f};     // S
     Vector2 bullet_direction = {+1.0f, -1.0f}; // d
 
     Vector2 wall_A_start = {-3.0f, -1.0f}; // A
-    Vector2 wall_A_end = {+4.0f, +1.0f}; // B
+    Vector2 wall_A_end = {+4.0f, +1.0f};   // B
 
     Vector2 wall_B_start = {+4.0f, +1.0f}; // B
-    Vector2 wall_B_end = {-1.0f, +3.0f}; // C
+    Vector2 wall_B_end = {-1.0f, +3.0f};   // C
 
     Vector2 hit_point_A; // Where bullet hits wall A
     getIntersection2D(bullet_start, bullet_direction, wall_A_start, wall_A_end, &hit_point_A);
