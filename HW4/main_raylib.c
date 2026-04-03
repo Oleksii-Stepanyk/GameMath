@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "raylib.h"
 
 const double LINE_PRECISION = 0.001f;
@@ -57,10 +59,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "Homework 4 - Vector Manipulation");
 
     Camera3D camera = {0};
-    camera.position = (Vector3){5.0f, 5.0f, 3.0f};
+    camera.position = (Vector3){-4.0f, 2.0f, -1.5f};
     camera.target = (Vector3){0.0f, 0.0f, 0.0f};
     camera.up = (Vector3){0.0f, 1.0f, 0.0f};
-    camera.fovy = 45.0f;
+    camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
     int currentFps = 120;
@@ -88,9 +90,17 @@ int main(void)
                 DrawThickLine(startPos, b, LINE_THICKNESS, BLUE);
                 DrawThickLine(startPos, TaskContext[currentContext][0], LINE_THICKNESS, DARKBROWN);
                 DrawThickLine(startPos, TaskContext[currentContext][1], LINE_THICKNESS, DARKPURPLE);
-                DrawGrid(30, 0.5f);
+                DrawGrid(15, 0.5f);
 
             EndMode3D();
+
+            // Task + Space + Num + \0
+            char taskText[7]; // 4 + 1 + 1 + 1
+            char* title = "Task";
+            char num = 49 + currentContext;
+            snprintf(taskText, sizeof(taskText), "%s %s", title, &num);
+
+            DrawText(taskText, 30, 30, 50, DARKGRAY);
 
         EndDrawing();
     }
