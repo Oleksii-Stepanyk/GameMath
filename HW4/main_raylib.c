@@ -3,36 +3,25 @@
 const double LINE_PRECISION = 0.001f;
 const double LINE_THICKNESS = 0.015f;
 
-void DrawThickLine(Vector3 start, Vector3 v, double thickness, Color color)
+void DrawThickLine(Vector3 start, Vector3 end, double thickness, Color color)
 {
-    if (thickness <= LINE_PRECISION)
-    {
-        thickness = LINE_PRECISION;
-    }
+    if (thickness <= LINE_PRECISION) thickness = LINE_PRECISION;
 
-    double originalStartX = start.x;
-    double originalStartY = start.y;
-
-    double originalX = v.x;
-    double originalY = v.y;
+    Vector3 a = {start.x, start.y, start.z};
+    Vector3 b = {end.x, end.y, end.z};
 
     for (double i = -thickness; i <= thickness; i = i + LINE_PRECISION)
     {
         for (double j = -thickness; j <= thickness; j = j + LINE_PRECISION)
         {
-            start.x = originalStartX + i;
-            start.y = originalStartY + j;
+            a.x = start.x + i;
+            a.y = start.y + j;
 
-            v.x = originalX + i;
-            v.y = originalY + j;
-            DrawLine3D(start, v, color);
+            b.x = end.x + i;
+            b.y = end.y + j;
+            DrawLine3D(a, b, color);
         }
     }
-
-    start.x = originalStartX;
-    start.y = originalStartY;
-    v.x = originalX;
-    v.y = originalY;
 }
 
 int main(void)
