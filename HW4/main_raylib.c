@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 
 #include "raylib.h"
 
@@ -16,12 +17,16 @@ void DrawThickLine(Vector3 start, Vector3 end, double thickness, Color color)
     {
         for (double j = -thickness; j <= thickness; j = j + LINE_PRECISION)
         {
-            a.x = start.x + i;
-            a.y = start.y + j;
+            if ((fabs(i - thickness) < LINE_PRECISION || fabs(i + thickness) < LINE_PRECISION)
+             || (fabs(j - thickness) < LINE_PRECISION || fabs(j + thickness) < LINE_PRECISION))
+            {
+                a.x = start.x + i;
+                a.y = start.y + j;
 
-            b.x = end.x + i;
-            b.y = end.y + j;
-            DrawLine3D(a, b, color);
+                b.x = end.x + i;
+                b.y = end.y + j;
+                DrawLine3D(a, b, color);
+            }
         }
     }
 }
