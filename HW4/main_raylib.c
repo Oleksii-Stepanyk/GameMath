@@ -2,7 +2,7 @@
 
 #include "raylib.h"
 
-const double LINE_PRECISION = 0.001f;
+const double LINE_PRECISION = 0.0001f;
 const double LINE_THICKNESS = 0.015f;
 
 void DrawThickLine(Vector3 start, Vector3 end, double thickness, Color color)
@@ -34,7 +34,7 @@ int main(void)
     Vector3 startPos = {0, 0, 0};
 
     Vector3 a = {+2, +1, +5};
-    Vector3 b = {+2, +1, +5};
+    // Vector3 b = {+2, +1, +5}; // Same as a
 
     Vector3 Aa_1 = {+2, +1, +5};
     Vector3 Ab_1 = {+6, +3, +11};
@@ -65,11 +65,14 @@ int main(void)
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
+    DisableCursor();
+
     int currentFps = 120;
     SetTargetFPS(currentFps);
-    SetTraceLogLevel(LOG_ALL);
     while (!WindowShouldClose())
     {
+        UpdateCamera(&camera, CAMERA_FREE);
+        
         if (IsKeyDown(KEY_RIGHT))
         {
             currentContext = (currentContext + 1) % 4;
@@ -80,6 +83,7 @@ int main(void)
             currentContext = (currentContext + 3) % 4;
             WaitTime(0.5);
         }
+        if (IsKeyPressed(KEY_Z)) camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
 
         BeginDrawing();
 
@@ -87,12 +91,19 @@ int main(void)
             BeginMode3D(camera);
 
                 DrawThickLine(startPos, a, LINE_THICKNESS, RED);
-                DrawThickLine(startPos, b, LINE_THICKNESS, BLUE);
-                DrawThickLine(startPos, TaskContext[currentContext][0], LINE_THICKNESS, DARKBROWN);
+                DrawThickLine(startPos, TaskContext[currentContext][0], LINE_THICKNESS, DARKBLUE);
                 DrawThickLine(startPos, TaskContext[currentContext][1], LINE_THICKNESS, DARKPURPLE);
-                DrawGrid(15, 0.5f);
+                DrawGrid(50, 0.5f);
 
             EndMode3D();
+
+            DrawRectangle( 10, 10, 320, 93, Fade(SKYBLUE, 0.5f));
+            DrawRectangleLines( 10, 10, 320, 93, BLUE);
+
+            DrawText("Free camera default controls:", 20, 20, 15, BLACK);
+            DrawText("- Mouse Wheel to Zoom in-out", 40, 40, 15, DARKGRAY);
+            DrawText("- Mouse Wheel Pressed to Pan", 40, 60, 15, DARKGRAY);
+            DrawText("- Z to zoom to (0, 0, 0)", 40, 80, 15, DARKGRAY);
 
             // Task + Space + Num + \0
             char taskText[7]; // 4 + 1 + 1 + 1
@@ -100,7 +111,7 @@ int main(void)
             char num = 49 + currentContext;
             snprintf(taskText, sizeof(taskText), "%s %s", title, &num);
 
-            DrawText(taskText, 30, 30, 50, DARKGRAY);
+            DrawText(taskText, 1080, 30, 50, DARKGRAY);
 
         EndDrawing();
     }
