@@ -10,12 +10,6 @@ void print_vector(Vector v, const char label[])
     printf("(x = %.4f, y = %.4f, z = %.4f)\n", v.x, v.y, v.z);
 }
 
-void print_quaternion(Quaternion q, const char label[])
-{
-    printf("%s ", label);
-    printf("(w = %.4f, x = %.4f, y = %.4f, z = %.4f)\n", q.w, q.x, q.y, q.z);
-}
-
 int main()
 {
     Vector v = {1.0f, 1.0f, 1.0f};
