@@ -112,6 +112,30 @@ void test_magnitude_and_normalization() {
     std::cout << "[PASS] Magnitude and Normalization\n";
 }
 
+void test_chain_calls() {
+    vector4 v1(1.0f, 2.0f, 3.0f, 4.0f);
+    vector4 delta(1.0f, 1.0f, 1.0f, 1.0f);
+
+    vector4& ref = v1.add(delta)
+                    .sub(0.5f, 1.0f, 1.5f)
+                    .mul(2.0f, 0.5f)
+                    .div(2.0f, 0.5f);
+
+    assert(&ref == &v1 && "chained call should return self reference");
+    assert(check_vec(v1, 1.5f, 2.0f, 2.5f, 5.0f) && "chained arithmetic operations failed");
+
+    vector4 v2(1.0f, 2.0f, 3.0f, 1.0f);
+    vector4 dot_other(2.0f, 0.5f, 1.0f, 4.0f);
+
+    v2.mul(2.0f)
+      .dot(dot_other)
+      .add(1.0f, 1.0f, 1.0f);
+
+    assert(check_vec(v2, 21.0f, 21.0f, 21.0f, 20.0f) && "chained dot + add operations failed");
+
+    std::cout << "[PASS] Chain Calls\n";
+}
+
 int main() {
     std::cout << "--- Starting SIMD Vector4 Tests ---\n";
     
@@ -122,6 +146,7 @@ int main() {
     test_division();
     test_dot_product();
     test_magnitude_and_normalization();
+    test_chain_calls();
     
     std::cout << "--- All Tests Passed! ---\n";
     
