@@ -1,11 +1,19 @@
 #include <stdio.h>
 #include <math.h>
-#include <stdlib.h>
+#include <float.h>
 
 #include "raylib.h"
 #include "spot.h"
 
 #define RGB(r, g, b) CLITERAL(Color){(r), (g), (b), 255}
+
+typedef enum DistanceMode
+{
+    DISTANCE_EUCLIDEAN = 0,
+    DISTANCE_MANHATTAN = 1,
+    DISTANCE_CHEBYSHEV = 2,
+    DISTANCE_MODE_COUNT = 3
+} DistanceMode;
 
 int main(void)
 {
@@ -49,116 +57,90 @@ int main(void)
         {20.592628931571543f, 820.5699420821875f, RGB(190, 30, 30), RGB(190, 30, 30), RGB(190, 30, 30)},
         {347.021205995958f, 868.8763891087576f, RGB(40, 170, 40), RGB(40, 170, 40), RGB(40, 170, 40)}};
     const int spotCount = (int)(sizeof(spots) / sizeof(spots[0]));
-    const int gridCount = gridX * gridY;
 
-    Spot *grid = (Spot *)malloc((size_t)gridCount * sizeof(Spot));
-    if (grid == NULL)
-    {
-        fprintf(stderr, "Failed to allocate grid memory\n");
-        return 1;
-    }
+    Image modeImages[DISTANCE_MODE_COUNT] = {
+        GenImageColor(gridX, gridY, BLANK),
+        GenImageColor(gridX, gridY, BLANK),
+        GenImageColor(gridX, gridY, BLANK)};
+    Color *modePixels[DISTANCE_MODE_COUNT] = {
+        (Color *)modeImages[DISTANCE_EUCLIDEAN].data,
+        (Color *)modeImages[DISTANCE_MANHATTAN].data,
+        (Color *)modeImages[DISTANCE_CHEBYSHEV].data};
 
     for (int x = 0; x < gridX; x++)
     {
         for (int y = 0; y < gridY; y++)
         {
             int nearestEuclideanSpotIndex = -1;
-            float nearestEuclideanSpotDistance = 999999.0f;
+            float nearestEuclideanSpotDistanceSquared = FLT_MAX;
             int nearestManhattanSpotIndex = -1;
-            float nearestManhattanSpotDistance = 999999.0f;
+            float nearestManhattanSpotDistance = FLT_MAX;
             int nearestChebyshevSpotIndex = -1;
-            float nearestChebyshevSpotDistance = 999999.0f;
+            float nearestChebyshevSpotDistance = FLT_MAX;
             for (int z = 0; z < spotCount; z++)
             {
                 float dx = spots[z].x - (float)x;
                 float dy = spots[z].y - (float)y;
-                float euclidian_distance = sqrtf(dx * dx + dy * dy);
-                float manhattan_distance = fabsf(dx) + fabsf(dy);
-                float chebyshev_distance = fmaxf(fabsf(dx), fabsf(dy));
+                float absDx = fabsf(dx);
+                float absDy = fabsf(dy);
+                float euclideanDistanceSquared = dx * dx + dy * dy;
+                float manhattanDistance = absDx + absDy;
+                float chebyshevDistance = fmaxf(absDx, absDy);
 
-                if (euclidian_distance < nearestEuclideanSpotDistance)
+                if (euclideanDistanceSquared < nearestEuclideanSpotDistanceSquared)
                 {
-                    nearestEuclideanSpotDistance = euclidian_distance;
+                    nearestEuclideanSpotDistanceSquared = euclideanDistanceSquared;
                     nearestEuclideanSpotIndex = z;
                 }
-                if (manhattan_distance < nearestManhattanSpotDistance)
+                if (manhattanDistance < nearestManhattanSpotDistance)
                 {
-                    nearestManhattanSpotDistance = manhattan_distance;
+                    nearestManhattanSpotDistance = manhattanDistance;
                     nearestManhattanSpotIndex = z;
                 }
-                if (chebyshev_distance < nearestChebyshevSpotDistance)
+                if (chebyshevDistance < nearestChebyshevSpotDistance)
                 {
-                    nearestChebyshevSpotDistance = chebyshev_distance;
+                    nearestChebyshevSpotDistance = chebyshevDistance;
                     nearestChebyshevSpotIndex = z;
                 }
             }
-            grid[x * gridY + y] = SpotCreate(
-                (float)x,
-                (float)y,
-                spots[nearestEuclideanSpotIndex].euclidean_color,
-                spots[nearestManhattanSpotIndex].manhattan_color,
-                spots[nearestChebyshevSpotIndex].chebyshev_color);
+
+            int pixelIndex = y * gridX + x;
+            modePixels[DISTANCE_EUCLIDEAN][pixelIndex] = spots[nearestEuclideanSpotIndex].euclidean_color;
+            modePixels[DISTANCE_MANHATTAN][pixelIndex] = spots[nearestManhattanSpotIndex].manhattan_color;
+            modePixels[DISTANCE_CHEBYSHEV][pixelIndex] = spots[nearestChebyshevSpotIndex].chebyshev_color;
         }
     }
 
     InitWindow(screenWidth, screenHeight, "Homework 8 - Voronoi Diagram");
+    Texture2D modeTextures[DISTANCE_MODE_COUNT];
+    for (int i = 0; i < DISTANCE_MODE_COUNT; i++)
+    {
+        modeTextures[i] = LoadTextureFromImage(modeImages[i]);
+        UnloadImage(modeImages[i]);
+    }
 
-    int colorMode = 1;
-    int currentFps = 5;
-    SetTargetFPS(currentFps);
+    DistanceMode distanceMode = DISTANCE_EUCLIDEAN;
+    SetTargetFPS(5);
     while (!WindowShouldClose())
     {
         if (IsKeyPressed(KEY_ONE))
         {
-            colorMode = 1;
+            distanceMode = DISTANCE_EUCLIDEAN;
         }
         else if (IsKeyPressed(KEY_TWO))
         {
-            colorMode = 2;
+            distanceMode = DISTANCE_MANHATTAN;
         }
         else if (IsKeyPressed(KEY_THREE))
         {
-            colorMode = 3;
+            distanceMode = DISTANCE_CHEBYSHEV;
         }
 
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
+        DrawTexture(modeTextures[distanceMode], gridOffsetX, gridOffsetY, WHITE);
         DrawRectangleLines(gridOffsetX, gridOffsetY, gridX, gridY, BLACK);
-
-        if (colorMode == 1)
-        {
-            for (int x = 0; x < gridX; x++)
-            {
-                for (int y = 0; y < gridY; y++)
-                {
-                    Spot spot = grid[x * gridY + y];
-                    DrawPixel(gridOffsetX + (int)spot.x, gridOffsetY + (int)spot.y, spot.euclidean_color);
-                }
-            }
-        }
-        else if (colorMode == 2)
-        {
-            for (int x = 0; x < gridX; x++)
-            {
-                for (int y = 0; y < gridY; y++)
-                {
-                    Spot spot = grid[x * gridY + y];
-                    DrawPixel(gridOffsetX + (int)spot.x, gridOffsetY + (int)spot.y, spot.manhattan_color);
-                }
-            }
-        }
-        else if (colorMode == 3)
-        {
-            for (int x = 0; x < gridX; x++)
-            {
-                for (int y = 0; y < gridY; y++)
-                {
-                    Spot spot = grid[x * gridY + y];
-                    DrawPixel(gridOffsetX + (int)spot.x, gridOffsetY + (int)spot.y, spot.chebyshev_color);
-                }
-            }
-        }
 
         for (int i = 0; i < spotCount; i++)
         {
@@ -170,7 +152,12 @@ int main(void)
 
         EndDrawing();
     }
+
+    for (int i = 0; i < DISTANCE_MODE_COUNT; i++)
+    {
+        UnloadTexture(modeTextures[i]);
+    }
+
     CloseWindow();
-    free(grid);
     return 0;
 }
